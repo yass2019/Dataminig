@@ -1,0 +1,46 @@
+
+library(rpart)# Pour l'arbre de décision
+library(rpart.plot) # Pour la représentation de l'arbre de décision
+
+#Description des données
+summary(share_with_anxiety_disorders)
+
+#Création d'un dataset d'apprentissage et d'un dataset de validation
+nb_lignes <- floor((nrow(share_with_anxiety_disorders)*0.75)) #Nombre de lignes de l'échantillon d'apprentissage : 75% du dataset
+share_with_anxiety_disorders <- pains[sample(nrow(share_with_anxiety_disorders)), ] #Ajout de numéros de lignes
+share_with_anxiety_disorders.train <- share_with_anxiety_disorders[1:nb_lignes, ] #Echantillon d'apprentissage
+share_with_anxiety_disorders.test <- share_with_anxiety_disorders[(nb_lignes+1):nrow(share_with_anxiety_disorders,)]  #Echantillon de test
+
+
+#Construction de l'arbre
+share_with_anxiety_disorders.Tree <- rpart(share_with_anxiety_disorders~.,data=share_with_anxiety_disorders.train, control=rpart.control(minsplit=5,cp=0))
+
+#Affichage du résultat
+plot(share_with_anxiety_disorders.Tree, uniform=TRUE, branch=0.5, margin=0.1)
+text(share_with_anxiety_disorders.Tree, all=FALSE, use.n=TRUE)
+
+
+#On cherche à minimiser l'erreur pour définir le niveau d'élagage
+plotcp(share_with_anxiety_disorders.Tree)
+
+#Affichage du cp optimal
+print(share_with_anxiety_disorders.Tree$cptable[which.min(share_with_anxiety_disorders.Tree$cptable[,4]),1])
+
+
+#Elagage de l'arbre avec le cp optimal
+share_with_anxiety_disorders.Tree_Opt <- prune(share_with_anxiety_disorders.Tree,cp=share_with_anxiety_disorders.Tree$cptable[which.min(share_with_anxiety_disorders.Tree$cptable[,4]),1])
+
+#Représentation graphique de l'arbre optimal
+prp(share_with_anxiety_disorders.Tree_Opt,extra=1)
+
+#Prédiction du modèle sur les données de test
+share_with_anxiety_disorders.test_Predict<-predict(share_with_anxiety_disorderspains.Tree_Opt,newdata=share_with_anxiety_disorders.test)
+
+#Matrice de confusion
+mc <- table(share_with_anxiety_disorders.test$share_with_anxiety_disorders,share_with_anxiety_disorders.test_Predict)
+print(mc)
+
+
+
+#Affichage des règles de construction de l'arbre
+print(share_with_anxiety_disorders.Tree_Opt)

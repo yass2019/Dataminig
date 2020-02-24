@@ -1,0 +1,66 @@
+## arbre de décision cars
+library(rpart)
+library(rpart.plot)
+data(share_with_anxiety_disorders)
+lapply(share_with_anxiety_disorders,class)
+carsTree         <- rpart(Troubles_anxieux_age~.,data=share_with_anxiety_disorders)
+carsTree         <- rpart(Troubles_anxieux_age~.,data=share_with_anxiety_disorders,control=rpart.control(minsplit=5,cp=0))
+plotcp(carsTree)
+carsSimple       <- prune(carsTree,cp=0.0053)
+carsOptimal      <- prune(carsTree,cp=carsTree$cptable[which.min(carsTree$cptable[,4]),1])
+prp(carsOptimal,extra=1)
+
+
+##arbre de décision pains
+library(rpart)
+library(rpart.plot)
+data(Morocco)
+head()
+str(pains)
+summary(pains)
+lapply(pains,class)
+painsTree         <- rpart(PRI~.,data=pains)
+painsTree         <- rpart(PRI~.,data=pains,control=rpart.control(minsplit=2,cp=0))
+plotcp(painsTree)
+painsSimple       <- prune(painsTree,cp=0.0047)
+painsOptimal      <- prune(painsTree,cp=painsTree$cptable[which.min(painsTree$cptable[,2]),0])
+prp(painsOptimal,extra=1)
+
+
+
+##arbre de décision salary
+library(rpart)
+library(rpart.plot)
+data(Salary)
+head(Salary)
+str(Salary)
+summary(Salary)
+lapply(Salary,class)
+salaryTree         <- rpart(workclass~.,data=Salary)
+salaryTree         <- rpart(workclass~.,data=Salary,control=rpart.control(minsplit=4,cp=0))
+plotcp(salaryTree)
+salarySimple       <- prune(salaryTree,cp=0.0047)
+salaryOptimal      <- prune(salaryTree,cp=painsTree$cptable[which.min(painsTree$cptable[,2]),0])
+prp(salaryOptimal,extra=1)
+
+
+##arbre de décision iris  ##1
+library(rpart)
+data(Morroco)
+View(Morroco)
+a1<-rpart(Annee~.,data=Morroco)
+print(a1)
+
+##arbre de décision iris  ##2
+library(tree)
+data(iris)
+a2<-tree(Species~.,data=iris)
+plot(a2)
+text(a2)
+
+
+##arbre de décision iris  ##3
+library(party)
+data(share_with_anxiety_disorders)
+a3<-ctree(Troubles_anxieux_age~.,data=share_with_anxiety_disorders)
+plot(a3)
